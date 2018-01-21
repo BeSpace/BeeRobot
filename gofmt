@@ -1,0 +1,5 @@
+#!/bin/sh
+
+go fmt controllers/*
+go fmt models/*
+go fmt routers/*
