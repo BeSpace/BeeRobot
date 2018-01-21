@@ -1,10 +1,8 @@
 package models
 
-
-
 type BaseQueryParam struct {
-	Sort   string `json:"sort"`
-	Order  string `json:"order"`
-	Page   int  `json:"offset"`
-	Limit  int    `json:"limit"`
+	Sort  string `json:"sort"`
+	Order string `json:"order"`
+	Page  int    `json:"offset"`
+	Limit int    `json:"limit"`
 }

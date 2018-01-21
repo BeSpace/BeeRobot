@@ -1,12 +1,11 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
 	"beego/BeeRobot/models"
 	"crypto/hmac"
 	"crypto/sha1"
 	"fmt"
+	"github.com/astaxie/beego"
 )
 
 type CQController struct {
@@ -15,9 +14,8 @@ type CQController struct {
 
 /* 这个函数主要是为了用户扩展用的，这个函数会在下面定义的这些 Method 方法之前执行，用户可以重写这个函数实现类似用户验证之类。*/
 func (this *CQController) Prepare() {
-	
-}
 
+}
 
 func (this *CQController) Post() {
 
@@ -25,24 +23,23 @@ func (this *CQController) Post() {
 
 	requestBody := string(this.Ctx.Input.RequestBody)
 	receivedSHA1 := string(string(this.Ctx.Input.Header("x-signature")))
-	
-	isRaw := checkSHA1(requestBody,receivedSHA1)
 
-	if(isRaw){
+	isRaw := checkSHA1(requestBody, receivedSHA1)
+
+	if isRaw {
 		CQreq := models.CQreq{}
 		CQreq.Message = string(requestBody)
 		models.SaveCQreq(&CQreq)
-	}	
+	}
 
 }
 
-func (this *CQController) ListCQreq(){
+func (this *CQController) ListCQreq() {
 
-	
 	var params models.BaseQueryParam
 
-	params.Page,_ = this.GetInt("page")
-	params.Limit,_ = this.GetInt("limit")
+	params.Page, _ = this.GetInt("page")
+	params.Limit, _ = this.GetInt("limit")
 
 	data, total := models.PageListCQreg(&params)
 	result := make(map[string]interface{})
@@ -52,7 +49,6 @@ func (this *CQController) ListCQreq(){
 	this.Data["json"] = result
 	this.ServeJSON()
 }
-
 
 func (this *CQController) ContentCQreq() {
 	this.EnableRender = true
@@ -70,7 +66,7 @@ func (this *CQController) ContentCQreq() {
  * @param  {[type]} receivedSHA1 string)       (isRaw        bool [description]
  * @return {[type]}              [description]
  */
-func checkSHA1(requestBody string,receivedSHA1 string) (isRaw bool) {
+func checkSHA1(requestBody string, receivedSHA1 string) (isRaw bool) {
 	secret := beego.AppConfig.String("secret")
 
 	//hmac ,use sha1
@@ -79,6 +75,6 @@ func checkSHA1(requestBody string,receivedSHA1 string) (isRaw bool) {
 	mac.Write([]byte(requestBody))
 
 	// Validate signature.
-	isRaw = (string(fmt.Sprintf("sha1=%x",mac.Sum(nil))) == receivedSHA1)
+	isRaw = (string(fmt.Sprintf("sha1=%x", mac.Sum(nil))) == receivedSHA1)
 	return
 }
